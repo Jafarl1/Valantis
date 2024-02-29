@@ -1,0 +1,26 @@
+.pageNavigators {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 1;
+
+  button {
+    width: 35px;
+    height: 35px;
+    border: 2px solid var(--brown);
+    background-color: var(--background);
+    border-radius: 5px;
+    outline: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+
+    img {
+      width: 90%;
+    }
+  }
+}

@@ -1,0 +1,21 @@
+.productsList {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 100px 10px 25px;
+  gap: 20px;
+  background-color: var(--background);
+}
+
+@media (max-width: 800px) {
+  .productsList {
+    padding-top: 150px
+  }
+}
+
+@media (max-width: 500px) {
+  .productsList {
+    padding-top: 230px
+  }
+}

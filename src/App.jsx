@@ -1,65 +1,68 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { chunkArray, fetchData } from "./utils";
 
-const API_BASE_URL = "https://api.valantis.store:40000/";
-const API_PASSWORD = "Valantis";
-
-const getAuthorizationHeader = () => {
-  const timestamp = new Date().toISOString().split("T")[0].replace(/-/g, "");
-  const authorizationString = `md5(${API_PASSWORD}_${timestamp})`;
-  console.log(authorizationString);
-  return { "X-Auth": authorizationString };
-};
-
-const fetchData = async (action, params) => {
-  try {
-    const response = await fetch(API_BASE_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...getAuthorizationHeader(),
-      },
-      body: JSON.stringify({ action, params }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.log(data);
-    return data.result;
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
-};
+import Loader from "./components/Loader/Loader";
+import ProductsList from "./components/ProductsList/ProductsList";
+import Pagination from "./components/Pagination/Pagination";
+import Header from "./components/Header/Header";
 
 function App() {
-  const [data, setData] = useState([]);
+  const [ids, setIds] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState();
+  const [currentItems, setCurrentItems] = useState();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchIds = async () => {
-      const ids = await fetchData("get_ids", { offset: 0, limit: 5 });
-      console.log(ids);
-    };
+    const getIds = async () => {
+      const ids = await fetchData("get_ids", { offset: 0 });
+      const uniqueIds = [...new Set(ids)];
 
-    const fetchFilteredData = async () => {
-      const filteredData = await fetchData("filter", { price: 17500.0 });
-      console.log(filteredData);
-      setData(filteredData);
+      setIds(chunkArray(uniqueIds, 50));
+      setTotalPages(Math.ceil(uniqueIds.length / 50));
     };
-
-    fetchIds();
-    fetchFilteredData();
+    getIds();
   }, []);
 
+  const getCurrentPageItems = useCallback(async () => {
+    setLoading(true);
+    const items = await fetchData("get_items", { ids: ids[currentPage - 1] });
+    let filteredItems;
+    if (items) {
+      filteredItems = items.filter(
+        (obj, index, self) => self.findIndex((o) => o.id === obj.id) === index
+      );
+    }
+    setCurrentItems(filteredItems);
+  }, [ids, currentPage]);
+
+  useEffect(() => {
+    getCurrentPageItems();
+  }, [getCurrentPageItems]);
+
+  useEffect(() => {
+    if (currentItems && currentItems.length > 0) {
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
+  }, [currentItems]);
+
   return (
-    <div>
-      <h1> API Data: </h1>
-      <ul>
-        {data.map((item) => (
-          <li key={item}>{item}</li>
-        ))}
-      </ul>
+    <div className="app">
+      {loading ? (
+        <Loader />
+      ) : (
+        <>
+          <Header />
+          <ProductsList data={currentItems} />
+          <Pagination
+            totalPages={totalPages}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+          />
+        </>
+      )}
     </div>
   );
 }

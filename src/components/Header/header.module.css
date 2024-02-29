@@ -1,0 +1,75 @@
+.header {
+  width: 100%;
+  height: 70px;
+  padding: 20px 200px;
+  background-color: var(--brown);
+  color: white;
+  box-shadow: 0px 0px 12px 2px rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  z-index: 4;
+
+  h1 {
+    font-size: 40px;
+    letter-spacing: 1px;
+    color: white;
+  }
+
+  .searchBar {
+    display: flex;
+    gap: 5px;
+
+    input,
+    select,
+    button {
+      height: 35px;
+      outline: none;
+      border: 1px solid var(--brown);
+      border-radius: 4px;
+      padding: 5px 10px;
+    }
+
+    input {
+      width: 300px;
+    }
+
+    button {
+      cursor: pointer;
+
+      img {
+        height: 100%;
+      }
+    }
+  }
+}
+
+@media (max-width: 1200px) {
+  .header {
+    padding: 20px 100px;
+  }
+}
+
+@media (max-width: 900px) {
+  .header {
+    padding: 20px 50px;
+  }
+}
+
+@media (max-width: 800px) {
+  .header {
+    height: 135px;
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 500px) {
+  .header {
+    height: 215px;
+  }
+  .searchBar {
+    flex-direction: column;
+  }
+}
