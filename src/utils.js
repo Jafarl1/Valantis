@@ -1,6 +1,6 @@
 import md5 from "md5";
 
-const API_BASE_URL = "http://api.valantis.store:40000/";
+const API_BASE_URL = "https://api.valantis.store:41000/";
 const API_PASSWORD = "Valantis";
 
 export const getAuthorizationHeader = (password) => {
